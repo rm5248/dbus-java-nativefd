@@ -196,7 +196,7 @@ JNIEXPORT jobject JNICALL Java_com_rm5248_dbusjava_nativefd_NativeMessageReader_
 			/* This is our FD array */
 			num_fds = CMSG_LEN( cmsg->cmsg_len ) / sizeof( int );
 			fd_array = (*env)->NewIntArray( env, num_fds );
-			(*env)->SetIntArrayRegion( env, fd_array, 0, num_fds, CMSG_DATA( cmsg ) );
+			(*env)->SetIntArrayRegion( env, fd_array, 0, num_fds, (int*)CMSG_DATA( cmsg ) );
 		}
 	}
 

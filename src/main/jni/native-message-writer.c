@@ -98,6 +98,7 @@ JNIEXPORT void JNICALL Java_com_rm5248_dbusjava_nativefd_NativeMessageWriter_wri
 	int message_size = (*env)->GetArrayLength( env, bytedata );
 	int fds_size = (*env)->GetArrayLength( env, filedescriptors );
 	struct cmsghdr* cmsg;
+	int fd_space_needed = CMSG_SPACE( sizeof( int ) * fds_size );
 
 	/* Make sure our data buffer is big enough and set the location */
 	if( tx_handle->tx_iovlen < message_size ){
@@ -108,19 +109,19 @@ JNIEXPORT void JNICALL Java_com_rm5248_dbusjava_nativefd_NativeMessageWriter_wri
 	tx_handle->msg_iodata.iov_len = message_size;
 
 	/* Make sure our FD array is large enough */
-	if( tx_handle->tx_fdlen < fds_size ){
+	if( tx_handle->tx_fdlen < fd_space_needed ){
 		free( tx_handle->fd_array );
-		tx_handle->fd_array = malloc( CMSG_SPACE( sizeof( int ) * fds_size ) );
+		tx_handle->fd_array = malloc( fd_space_needed );
 	}
 
 	/* Fill in our FD array(ancillary data) */
 	if( fds_size > 0 ){
 		tx_handle->msg_data.msg_control = tx_handle->fd_array;
-		tx_handle->msg_data.msg_controllen = sizeof( int ) * fds_size;
+		tx_handle->msg_data.msg_controllen = fd_space_needed;
 		cmsg = CMSG_FIRSTHDR( &tx_handle->msg_data );
 		cmsg->cmsg_level = SOL_SOCKET;
 		cmsg->cmsg_type = SCM_RIGHTS;
-		cmsg->cmsg_len = sizeof( int ) * fds_size;
+		cmsg->cmsg_len = CMSG_LEN( sizeof( int ) * fds_size );
 		(*env)->GetIntArrayRegion( env, filedescriptors, 0, fds_size, (int*)CMSG_DATA( cmsg ) );
 	}
 
