@@ -35,7 +35,7 @@
         <dependency>
             <groupId>com.github.hypfvieh</groupId>
             <artifactId>dbus-java</artifactId>
-            <version>3.2.1-SNAPSHOT</version>
+            <version>[3.2.1,)</version>
         </dependency>
 
         <!-- JUnit testing framework. -->
@@ -155,6 +155,7 @@
                     <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <logback.configurationFile>${basedir}/src/test/resources/logback.xml</logback.configurationFile>
+                        <com.rm5248.dbusnative.lib.path>${project.build.directory}/${platform}</com.rm5248.dbusnative.lib.path>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
