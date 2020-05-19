@@ -5,13 +5,26 @@
     <artifactId>dbus-java-nativefd</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
+    <name>DBus-java NativeFD</name>
+    <url>https://github.com/rm5248/dbus-java-nativefd</url>
+    <description>Allows you to send and receive FileDescriptors with com.github.hypfvieh:dbus-java</description>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <profiles>
         <profile>
@@ -27,6 +40,42 @@
                 <build.type>release</build.type>
                 <cmake.classifier>linux-x86_64</cmake.classifier>
             </properties>
+        </profile>
+
+        <profile>
+            <id>releaseProfile</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.8</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
         </profile>
     </profiles>
 
@@ -162,5 +211,35 @@
         </plugins>
     </build>
 
+<licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/rm5248/dbus-java-nativefd</url>
+        <connection>scm:git:https://github.com/rm5248/dbus-java-nativefd.git</connection>
+        <developerConnection>scm:git:git@github.com:rm5248/dbus-java-nativefd.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <url>https://github.com/rm5248/dbus-java-nativefd/issues</url>
+    </issueManagement>
+
+    <developers>
+        <developer>
+            <email>robert.middleton@rm5248.com</email>
+            <id>rm5248</id>
+            <name>Robert Middleton</name>
+            <url>http://www.rm5248.com</url>
+            <roles>
+                <role>Main Developer</role>
+            </roles>
+        </developer>
+    </developers>
 
 </project>
