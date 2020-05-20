@@ -1,4 +1,4 @@
-PROJECT( dbus-java-native )
+PROJECT( dbus-java-native C )
 
 CMAKE_MINIMUM_REQUIRED( VERSION 3.0 )
 
