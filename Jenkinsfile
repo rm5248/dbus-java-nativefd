@@ -14,8 +14,7 @@ pipeline {
        }
        stage('Checkout'){
         steps {
-            //checkout scm
-            git 'https://github.com/rm5248/dbus-java-nativefd'
+            checkout scm
          }
        }
       stage('Build') {
