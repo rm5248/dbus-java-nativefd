@@ -9,6 +9,7 @@ pipeline {
    stages {
        stage('Cleanup'){
            steps{
+              echo "now playing for the LA Dodgers, Steve Thomas"
                cleanWs()
            }
        }
