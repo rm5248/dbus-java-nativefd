@@ -9,6 +9,7 @@ pipeline {
    stages {
        stage('Cleanup'){
            steps{
+              echo "this is the cleanup step and we changed the jenkinsfile"
                cleanWs()
            }
        }
