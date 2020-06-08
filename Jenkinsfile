@@ -54,7 +54,7 @@ exit $EXIT_CODE
               sh '''
 mkdir -p target/amd64-cmake
 cd target/amd64-cmake
-cmake ../../src/main/jni
+../dependency/cmake/bin/cmake ../../src/main/jni
 make
 '''
           }
@@ -65,7 +65,7 @@ make
               sh '''
 mkdir -p target/x86-cmake
 cd target/x86-cmake
-CC="gcc -m32" cmake ../../src/main/jni
+CC="gcc -m32" ../dependency/cmake/bin/cmake ../../src/main/jni
 make
 '''
           }
@@ -76,7 +76,7 @@ make
               sh '''
 mkdir -p target/arm-cmake
 cd target/arm-cmake
-CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
+CC=arm-linux-gnueabihf-gcc ../dependency/cmake/bin/cmake ../../src/main/jni
 make
 '''
           }
