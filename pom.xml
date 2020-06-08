@@ -43,6 +43,22 @@
         </profile>
 
         <profile>
+            <id>add-precompiled-binaries</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>amd64/*.so</include>
+                            <include>i386/*.so</include>
+                            <include>armhf/*.so</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+
+        <profile>
             <id>releaseProfile</id>
 
             <build>
@@ -187,9 +203,6 @@
 
                         <configuration>
                             <projectDirectory>${project.build.directory}/${platform}</projectDirectory>
-                            <classifier>${cmake.classifier}</classifier>
-                            <config>${cmake.config}</config>
-                            <downloadBinaries>true</downloadBinaries>
                         </configuration>
                     </execution>
                 </executions>
@@ -211,7 +224,7 @@
         </plugins>
     </build>
 
-<licenses>
+    <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>

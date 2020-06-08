@@ -48,10 +48,56 @@ exit $EXIT_CODE
         
       }
       
+
+      stage('build-amd64'){
+          steps{
+              sh '''
+mkdir -p target/amd64-cmake
+cd target/amd64-cmake
+cmake ../../src/main/jni
+make
+'''
+          }
+      }
+
+      stage('build-x86'){
+          steps{
+              sh '''
+mkdir -p target/x86-cmake
+cd target/x86-cmake
+CC="gcc -m32" cmake ../../src/main/jni
+make
+'''
+          }
+      }
+
+      stage('build-arm'){
+          steps{
+              sh '''
+mkdir -p target/arm-cmake
+cd target/arm-cmake
+CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
+make
+'''
+          }
+      }
+
+      stage('copy-binaries-to-resources'){
+          steps{
+              sh '''
+mkdir -p src/main/resources/amd64
+mkdir -p src/main/resources/i386
+mkdir -p src/main/resources/arm
+
+cp target/amd64-cmake/*.so src/main/resources/amd64
+cp target/x86-cmake/*.so src/main/resources/i386
+cp target/arm-cmake/*.so src/main/resources/arm
+'''
+      }
       
       stage('Package'){
           steps{
-              sh 'mvn -Dmaven.test.skip=true package'
+              sh 'mvn -P add-precompiled-binaries -Dmaven.test.skip=true package'
           }
 
          post {
