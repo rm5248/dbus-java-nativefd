@@ -93,6 +93,7 @@ cp target/amd64-cmake/*.so src/main/resources/amd64
 cp target/x86-cmake/*.so src/main/resources/i386
 cp target/arm-cmake/*.so src/main/resources/arm
 '''
+          }
       }
       
       stage('Package'){
