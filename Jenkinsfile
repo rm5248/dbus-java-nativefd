@@ -69,9 +69,11 @@ exit $EXIT_CODE
                   cd src/main/jni
                   cmake .
                   make
+                  mkdir -p ../resources/amd64
+                  cp *.so ../resources/amd64
                  '''
 
-             stash includes: 'src/main/jni/*.so', name: 'lib-amd64'
+             stash includes: 'src/main/resources/**/*.so', name: 'lib-amd64'
           }
       }
 
@@ -115,6 +117,7 @@ cp target/arm-cmake/*.so src/main/resources/arm
       
       stage('Package'){
           steps{
+              unstash lib-amd64
               sh 'mvn -P add-precompiled-binaries -Dmaven.test.skip=true package'
           }
 
