@@ -95,12 +95,12 @@ exit $EXIT_CODE
                   }
               }
 
-              stage('build-arm'){
+              stage('build-armhf'){
                   steps{
                       sh '''
                           sudo apt-get -y install gcc-arm-linux-gnueabihf
-                          mkdir -p target/arm
-                          cd target/arm
+                          mkdir -p target/armhf
+                          cd target/armhf
                           CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
                           make
                          '''
@@ -112,11 +112,11 @@ exit $EXIT_CODE
                      sh '''
                             mkdir -p src/main/resources/amd64
                             mkdir -p src/main/resources/i386
-                            mkdir -p src/main/resources/arm
+                            mkdir -p src/main/resources/armhf
 
                             cp target/amd64/*.so src/main/resources/amd64
                             cp target/i386/*.so src/main/resources/i386
-                            cp target/arm/*.so src/main/resources/arm
+                            cp target/armhf/*.so src/main/resources/armhf
                         '''
                      stash includes: 'src/main/resources/**/*.so', name: 'libs'
                   }
