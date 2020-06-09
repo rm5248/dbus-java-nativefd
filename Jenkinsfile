@@ -54,10 +54,9 @@ exit $EXIT_CODE
         }
         
       }
-      
-      stage('build-amd64'){
+
+      stage('setup-native-build-depends'){
           agent{ label 'debian10-openstack' }
-          steps{
               sh '''
                   sudo apt-get -y install cmake build-essential
                  '''
@@ -66,58 +65,64 @@ exit $EXIT_CODE
 
               sh '''
                   mvn compiler:compile@generate-jni-headers
-                  cd src/main/jni
-                  cmake .
+                 '''
+      }
+      
+      stage('build-amd64'){
+          agent{ label 'debian10-openstack' }
+          steps{
+              sh '''
+                  mkdir -p target/amd64
+                  cd target/amd64
+                  cmake ../../src/main/jni
                   make
                   mkdir -p ../resources/amd64
                   cp *.so ../resources/amd64
                  '''
-
-             stash includes: 'src/main/resources/**/*.so', name: 'lib-amd64'
           }
       }
 
-/*
       stage('build-x86'){
+          agent{ label 'debian10-openstack' }
           steps{
               sh '''
-mkdir -p target/x86-cmake
-cd target/x86-cmake
-CC="gcc -m32" ../dependency/cmake/bin/cmake ../../src/main/jni
-make
-'''
+                  apt-get -y install gcc-multilib
+                  mkdir -p target/i386
+                  cd target/i386
+                  CC="gcc -m32" cmake ../../src/main/jni
+                  make
+                  mkdir -p ../resources/i386
+                  cp *.so ../resources/i386
+                 '''
           }
       }
 
       stage('build-arm'){
+          agent{ label 'debian10-openstack' }
           steps{
               sh '''
-mkdir -p target/arm-cmake
-cd target/arm-cmake
-CC=arm-linux-gnueabihf-gcc ../dependency/cmake/bin/cmake ../../src/main/jni
-make
-'''
+                  apt-get -y install gcc-arm-linux-gnueabihf
+                  mkdir -p target/armhf
+                  cd target/armhf
+                  CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
+                  make
+                  mkdir -p ../resources/arm
+                  cp *.so ../resources/arm
+                 '''
           }
       }
 
-      stage('copy-binaries-to-resources'){
+      stage('Stash Binaries'){
+          agent{ label 'debian10-openstack' }
           steps{
-              sh '''
-mkdir -p src/main/resources/amd64
-mkdir -p src/main/resources/i386
-mkdir -p src/main/resources/arm
-
-cp target/amd64-cmake/*.so src/main/resources/amd64
-cp target/x86-cmake/*.so src/main/resources/i386
-cp target/arm-cmake/*.so src/main/resources/arm
-'''
+             stash includes: 'src/main/resources/**/*.so', name: 'libs'
           }
       }
-*/
+
       
       stage('Package'){
           steps{
-              unstash 'lib-amd64'
+              unstash 'libs'
               sh 'mvn -P add-precompiled-binaries -Dmaven.test.skip=true package'
           }
 
