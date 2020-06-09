@@ -17,6 +17,13 @@ pipeline {
             checkout scm
          }
        }
+
+      stage('Launch Native Code VM'){
+          steps{
+              openstackMachine cloud: 'dreamhost', template: 'debian10-builder'
+          }
+      }
+
       stage('Build') {
         steps{
             sh 'mvn compile'
@@ -48,17 +55,11 @@ exit $EXIT_CODE
         
       }
       
-      stage('launch-build-vm'){
-          steps{
-              openstackMachine cloud: 'dreamhost', template: 'debian10-builder'
-          }
-      }
-
       stage('build-amd64'){
           agent{ label 'debian10-openstack' }
           steps{
               sh '''
-                  apt-get -y install cmake build-essential git
+                  sudo apt-get -y install cmake build-essential git
                  '''
 
               checkout scm
