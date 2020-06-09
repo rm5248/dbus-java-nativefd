@@ -117,7 +117,7 @@ cp target/arm-cmake/*.so src/main/resources/arm
       
       stage('Package'){
           steps{
-              unstash lib-amd64
+              unstash 'lib-amd64'
               sh 'mvn -P add-precompiled-binaries -Dmaven.test.skip=true package'
           }
 
