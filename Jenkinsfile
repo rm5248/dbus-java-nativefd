@@ -119,6 +119,7 @@ exit $EXIT_CODE
                             cp target/armhf/*.so src/main/resources/armhf
                         '''
                      stash includes: 'src/main/resources/**/*.so', name: 'libs'
+                     archiveArtifacts artifacts:'src/main/resources/**/*.so'
                   }
               }
 
