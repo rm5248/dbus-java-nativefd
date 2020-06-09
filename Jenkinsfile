@@ -88,7 +88,7 @@ exit $EXIT_CODE
           agent{ label 'debian10-openstack' }
           steps{
               sh '''
-                  apt-get -y install gcc-multilib
+                  sudo apt-get -y install gcc-multilib
                   mkdir -p target/i386
                   cd target/i386
                   CC="gcc -m32" cmake ../../src/main/jni
@@ -103,7 +103,7 @@ exit $EXIT_CODE
           agent{ label 'debian10-openstack' }
           steps{
               sh '''
-                  apt-get -y install gcc-arm-linux-gnueabihf
+                  sudo apt-get -y install gcc-arm-linux-gnueabihf
                   mkdir -p target/armhf
                   cd target/armhf
                   CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
