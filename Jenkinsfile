@@ -59,13 +59,13 @@ exit $EXIT_CODE
           agent{ label 'debian10-openstack' }
           steps{
               sh '''
-                  sudo apt-get -y install cmake build-essential git
+                  sudo apt-get -y install cmake build-essential
                  '''
 
-echo "test test"
               checkout scm
 
               sh '''
+                  mvn compiler:compile@generate-jni-headers
                   cd src/main/jni
                   cmake .
                   make
