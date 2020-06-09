@@ -62,6 +62,7 @@ exit $EXIT_CODE
                   sudo apt-get -y install cmake build-essential git
                  '''
 
+echo "test test"
               checkout scm
 
               sh '''
