@@ -55,69 +55,73 @@ exit $EXIT_CODE
         
       }
 
-      stage('setup-native-build-depends'){
+      stage('Build Native Code'){
           agent{ label 'debian10-openstack' }
-          steps{
-              sh '''
-                  sudo apt-get -y install cmake build-essential
-                 '''
+          stages{ 
+              stage('Install Tools'){
+                  steps{
+                      sh '''
+                           sudo apt-get -y install cmake build-essential
+                         '''
 
-              checkout scm
+                  checkout scm
 
-              sh '''
-                  mvn compiler:compile@generate-jni-headers
-                 '''
-          }
-      }
-      
-      stage('build-amd64'){
-          agent{ label 'debian10-openstack' }
-          steps{
-              sh '''
-                  mkdir -p target/amd64
-                  cd target/amd64
-                  cmake ../../src/main/jni
-                  make
-                  mkdir -p ../resources/amd64
-                  cp *.so ../resources/amd64
-                 '''
-          }
-      }
+                  sh '''
+                      mvn compiler:compile@generate-jni-headers
+                     '''
+                  }
+              }
 
-      stage('build-x86'){
-          agent{ label 'debian10-openstack' }
-          steps{
-              sh '''
-                  sudo apt-get -y install gcc-multilib
-                  mkdir -p target/i386
-                  cd target/i386
-                  CC="gcc -m32" cmake ../../src/main/jni
-                  make
-                  mkdir -p ../resources/i386
-                  cp *.so ../resources/i386
-                 '''
-          }
-      }
+              stage('build-amd64'){
+                  steps{
+                      sh '''
+                          mkdir -p target/amd64
+                          cd target/amd64
+                          cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
+        
+              stage('build-x86'){
+                  steps{
+                      sh '''
+                          sudo apt-get -y install gcc-multilib
+                          mkdir -p target/i386
+                          cd target/i386
+                          CC="gcc -m32" cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
 
-      stage('build-arm'){
-          agent{ label 'debian10-openstack' }
-          steps{
-              sh '''
-                  sudo apt-get -y install gcc-arm-linux-gnueabihf
-                  mkdir -p target/armhf
-                  cd target/armhf
-                  CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
-                  make
-                  mkdir -p ../resources/arm
-                  cp *.so ../resources/arm
-                 '''
-          }
-      }
+              stage('build-arm'){
+                  steps{
+                      sh '''
+                          sudo apt-get -y install gcc-arm-linux-gnueabihf
+                          mkdir -p target/arm
+                          cd target/arm
+                          CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
+        
+              stage('Stash Binaries'){
+                  steps{
+                     sh '''
+                            mkdir -p src/main/resources/amd64
+                            mkdir -p src/main/resources/i386
+                            mkdir -p src/main/resources/arm
 
-      stage('Stash Binaries'){
-          agent{ label 'debian10-openstack' }
-          steps{
-             stash includes: 'src/main/resources/**/*.so', name: 'libs'
+                            cp target/amd64/*.so src/main/resources/amd64
+                            cp target/i386/*.so src/main/resources/i386
+                            cp target/arm/*.so src/main/resources/arm
+                        '''
+                     stash includes: 'src/main/resources/**/*.so', name: 'libs'
+                  }
+              }
+
           }
       }
 
