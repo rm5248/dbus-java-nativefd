@@ -48,18 +48,32 @@ exit $EXIT_CODE
         
       }
       
-
-      stage('build-amd64'){
+      stage('launch-build-vm'){
           steps{
-              sh '''
-mkdir -p target/amd64-cmake
-cd target/amd64-cmake
-../dependency/cmake/bin/cmake ../../src/main/jni
-make
-'''
+              openstackMachine cloud: 'dreamhost', template: 'debian10-builder'
           }
       }
 
+      stage('build-amd64'){
+          agent{ label 'debian10-openstack' }
+          steps{
+              sh '''
+                  apt-get -y install cmake build-essential git
+                 '''
+
+              checkout scm
+
+              sh '''
+                  cd src/main/jni
+                  cmake .
+                  make
+                 '''
+
+             stash includes: 'src/main/jni/*.so', name: 'lib-amd64'
+          }
+      }
+
+/*
       stage('build-x86'){
           steps{
               sh '''
@@ -95,6 +109,7 @@ cp target/arm-cmake/*.so src/main/resources/arm
 '''
           }
       }
+*/
       
       stage('Package'){
           steps{
