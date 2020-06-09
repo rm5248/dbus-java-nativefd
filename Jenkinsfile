@@ -57,6 +57,7 @@ exit $EXIT_CODE
 
       stage('setup-native-build-depends'){
           agent{ label 'debian10-openstack' }
+          steps{
               sh '''
                   sudo apt-get -y install cmake build-essential
                  '''
@@ -66,6 +67,7 @@ exit $EXIT_CODE
               sh '''
                   mvn compiler:compile@generate-jni-headers
                  '''
+          }
       }
       
       stage('build-amd64'){
