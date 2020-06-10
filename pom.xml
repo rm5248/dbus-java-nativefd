@@ -208,17 +208,6 @@
                 </configuration>
             </plugin>
         </plugins>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
-                    <include>amd64/*.so</include>
-                    <include>i386/*.so</include>
-                    <include>armhf/*.so</include>
-                </includes>
-            </resource>
-        </resources>
     </build>
 
     <licenses>
