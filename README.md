@@ -1,5 +1,7 @@
 # dbus-java-nativefd
 
+[![Build Status](https://jenkins.rm5248.com/buildStatus/icon?job=DBus-Java+Projects%2Fmultibranch-test%2Fmaster)](https://jenkins.rm5248.com/job/DBus-Java%20Projects/job/multibranch-test/job/master/)
+
 This repo contains an implementation of `IServiceProvider` for use
 with [dbus-java](https://github.com/hypfvieh/dbus-java) that allows
 for sending and receiving `FileDescriptor`s
@@ -37,7 +39,7 @@ com.rm5248.dbusnative.lib.name - explicitly give the name of the library(the
 default is 'dbus-java-jni-connector')
 ```
 
-Binaries are provided for Linux(amd64, i386, armhf, arm64).
+Binaries are provided for Linux(amd64, i386, armhf).
 
 # License
 
