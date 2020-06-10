@@ -187,9 +187,6 @@
 
                         <configuration>
                             <projectDirectory>${project.build.directory}/${platform}</projectDirectory>
-                            <classifier>${cmake.classifier}</classifier>
-                            <config>${cmake.config}</config>
-                            <downloadBinaries>true</downloadBinaries>
                         </configuration>
                     </execution>
                 </executions>
@@ -204,6 +201,8 @@
                     <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <logback.configurationFile>${basedir}/src/test/resources/logback.xml</logback.configurationFile>
+
+                        <!-- Run the tests with the (newly compiled) library instead of extracting from the JAR -->
                         <com.rm5248.dbusnative.lib.path>${project.build.directory}/${platform}</com.rm5248.dbusnative.lib.path>
                     </systemPropertyVariables>
                 </configuration>
@@ -211,7 +210,7 @@
         </plugins>
     </build>
 
-<licenses>
+    <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>

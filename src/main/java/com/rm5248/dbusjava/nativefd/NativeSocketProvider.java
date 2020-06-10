@@ -24,8 +24,6 @@ public class NativeSocketProvider implements ISocketProvider {
 
     static{
         loadNativeLibrary();
-//        System.out.println( "==================================================" );
-//        System.load( "/home/robert/NetBeansProjects/dbus-java-nativefd/target/linux-x86_64/libdbus-java-jni-connector.so" );
     }
 
     private boolean m_hasFiledescriptorSupport;

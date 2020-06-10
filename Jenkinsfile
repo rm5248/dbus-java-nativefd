@@ -1,5 +1,5 @@
 pipeline {
-   agent any
+   agent { label 'master' }
 
    tools {
       maven "maven 3.6.0"
@@ -17,6 +17,13 @@ pipeline {
             checkout scm
          }
        }
+
+      stage('Launch Native Code VM'){
+          steps{
+              openstackMachine cloud: 'dreamhost', template: 'debian10-builder'
+          }
+      }
+
       stage('Build') {
         steps{
             sh 'mvn compile'
@@ -47,10 +54,83 @@ exit $EXIT_CODE
         }
         
       }
-      
+
+      stage('Build Native Code'){
+          agent{ label 'debian10-openstack' }
+          stages{ 
+              stage('Install Tools'){
+                  steps{
+                      sh '''
+                           sudo apt-get -y install cmake build-essential
+                         '''
+
+                  checkout scm
+
+                  sh '''
+                      mvn compiler:compile@generate-jni-headers
+                     '''
+                  }
+              }
+
+              stage('build-amd64'){
+                  steps{
+                      sh '''
+                          mkdir -p target/amd64
+                          cd target/amd64
+                          cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
+        
+              stage('build-x86'){
+                  steps{
+                      sh '''
+                          sudo apt-get -y install gcc-multilib
+                          mkdir -p target/i386
+                          cd target/i386
+                          CC="gcc -m32" cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
+
+              stage('build-armhf'){
+                  steps{
+                      sh '''
+                          sudo apt-get -y install gcc-arm-linux-gnueabihf
+                          mkdir -p target/armhf
+                          cd target/armhf
+                          CC=arm-linux-gnueabihf-gcc cmake ../../src/main/jni
+                          make
+                         '''
+                  }
+              }
+        
+              stage('Stash Binaries'){
+                  steps{
+                     sh '''
+                            mkdir -p src/main/resources/amd64
+                            mkdir -p src/main/resources/i386
+                            mkdir -p src/main/resources/armhf
+
+                            cp target/amd64/*.so src/main/resources/amd64
+                            cp target/i386/*.so src/main/resources/i386
+                            cp target/armhf/*.so src/main/resources/armhf
+                        '''
+                     stash includes: 'src/main/resources/**/*.so', name: 'libs'
+                     archiveArtifacts artifacts:'src/main/resources/**/*.so'
+                  }
+              }
+
+          }
+      }
+
       
       stage('Package'){
+          // Since we have built all of the libs, we will extract those over the current libs
           steps{
+              unstash 'libs'
               sh 'mvn -Dmaven.test.skip=true package'
           }
 
