@@ -128,9 +128,10 @@ exit $EXIT_CODE
 
       
       stage('Package'){
+          // Since we have built all of the libs, we will extract those over the current libs
           steps{
               unstash 'libs'
-              sh 'mvn -P add-precompiled-binaries -Dmaven.test.skip=true package'
+              sh 'mvn -Dmaven.test.skip=true package'
           }
 
          post {

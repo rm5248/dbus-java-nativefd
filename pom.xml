@@ -43,22 +43,6 @@
         </profile>
 
         <profile>
-            <id>add-precompiled-binaries</id>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <includes>
-                            <include>amd64/*.so</include>
-                            <include>i386/*.so</include>
-                            <include>armhf/*.so</include>
-                        </includes>
-                    </resource>
-                </resources>
-            </build>
-        </profile>
-
-        <profile>
             <id>releaseProfile</id>
 
             <build>
@@ -217,11 +201,24 @@
                     <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
                         <logback.configurationFile>${basedir}/src/test/resources/logback.xml</logback.configurationFile>
+
+                        <!-- Run the tests with the (newly compiled) library instead of extracting from the JAR -->
                         <com.rm5248.dbusnative.lib.path>${project.build.directory}/${platform}</com.rm5248.dbusnative.lib.path>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>amd64/*.so</include>
+                    <include>i386/*.so</include>
+                    <include>armhf/*.so</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
     <licenses>
