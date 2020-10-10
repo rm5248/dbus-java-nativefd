@@ -1,6 +1,6 @@
 # dbus-java-nativefd
 
-[![Build Status](https://jenkins.rm5248.com/buildStatus/icon?job=DBus-Java+Projects%2Fmultibranch-test%2Fmaster)](https://jenkins.rm5248.com/job/DBus-Java%20Projects/job/multibranch-test/job/master/)
+[![Build Status](https://jenkins.rm5248.com/buildStatus/icon?job=dbus-java%2Fmultibranch-test%2Fmaster)](https://jenkins.rm5248.com/job/dbus-java/job/multibranch-test/job/master/)
 
 This repo contains an implementation of `IServiceProvider` for use
 with [dbus-java](https://github.com/hypfvieh/dbus-java) that allows
