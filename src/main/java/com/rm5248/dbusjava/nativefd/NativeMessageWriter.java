@@ -2,12 +2,14 @@ package com.rm5248.dbusjava.nativefd;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import jnr.posix.POSIXFactory;
+
 import org.freedesktop.dbus.FileDescriptor;
 import org.freedesktop.dbus.messages.Message;
-import org.freedesktop.dbus.spi.IMessageWriter;
+import org.freedesktop.dbus.spi.message.IMessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jnr.posix.POSIXFactory;
 
 /**
  *
@@ -36,14 +38,12 @@ public class NativeMessageWriter implements IMessageWriter {
         int loc = 0;
 
         logger.debug("<= {}", m);
-        if (null == m) {
-            return;
-        }
+
         if (null == m.getWireData()) {
             logger.warn("Message {} wire-data was null!", m);
             return;
         }
-        
+
         for (byte[] buf : m.getWireData()) {
             if( buf == null ){
                 break;
@@ -54,7 +54,7 @@ public class NativeMessageWriter implements IMessageWriter {
         for( FileDescriptor fd : m.getFiledescriptors() ){
             fds[ loc++ ] = fd.getIntFileDescriptor();
         }
-        
+
         writeNative( m_nativeHandle, bos.toByteArray(), fds );
     }
 

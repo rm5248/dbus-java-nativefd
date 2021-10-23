@@ -1,14 +1,15 @@
 package com.rm5248.dbusjava.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import jnr.constants.platform.AddressFamily;
-import jnr.constants.platform.Sock;
-import jnr.posix.POSIXFactory;
-import org.freedesktop.dbus.FileDescriptor;
 
+import org.freedesktop.dbus.FileDescriptor;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.connections.impl.DBusConnection.DBusBusType;
@@ -19,19 +20,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import jnr.constants.platform.AddressFamily;
+import jnr.constants.platform.Sock;
+import jnr.posix.POSIXFactory;
+
 public class MarshallingFileDescriptorTest {
 
     private static jnr.posix.POSIX POSIX = POSIXFactory.getPOSIX();
 
     private static final String TEST_OBJECT_PATH = "/TestFileDescriptor";
     private static final String TEST_BUSNAME = "foo.bar.TestFileDescriptor";
-    
+
     private DBusConnection serverConn;
     private DBusConnection clientConn;
 
     private int[] filedescriptors = {0, 0};
     private byte[] tosend = "this is a test".getBytes();
-    
+
     @BeforeEach
     public void before() throws DBusException, FileNotFoundException, IOException {
         serverConn = DBusConnection.getConnection(DBusBusType.SESSION);
@@ -49,7 +54,7 @@ public class MarshallingFileDescriptorTest {
         assertTrue(filedescriptors[1] > 0);
 
         GetFileDescriptor gfd = new GetFileDescriptor( new FileDescriptor( filedescriptors[1] ) );
-        
+
         serverConn.exportObject(TEST_OBJECT_PATH, gfd);
     }
 
@@ -63,40 +68,40 @@ public class MarshallingFileDescriptorTest {
         if (null != dbee) {
             throw dbee;
         }
-        
+
         clientConn.disconnect();
         serverConn.disconnect();
     }
-    
+
     @Test
     public void testFileDescriptor() throws DBusException, IOException {
         DBusInterface remoteObject = clientConn.getRemoteObject("foo.bar.TestFileDescriptor", TEST_OBJECT_PATH, IFileDescriptor.class);
 
         assertTrue(remoteObject instanceof IFileDescriptor, "Expected instance of GetFileDescriptor");
-        
+
         FileDescriptor fileDescriptor = ((IFileDescriptor) remoteObject).getFileDescriptor();
         assertNotNull(fileDescriptor, "Descriptor should not be null");
-        
+
         int receivedFdId = fileDescriptor.getIntFileDescriptor();
 
         assertNotEquals( receivedFdId, filedescriptors[ 1 ] );
 
-        if( POSIX.write( filedescriptors[ 0 ], tosend, tosend.length ) < 0 ){
-            System.out.println( "Can't write?" );
+        if (POSIX.write(filedescriptors[0], tosend, tosend.length) < 0) {
+            System.out.println("Can't write?");
         }
 
         System.out.println( "Received int FD value " + receivedFdId );
         byte[] data = new byte[ tosend.length ];
         int len = POSIX.read( receivedFdId, data, data.length );
-        if( len < 0 ){
-            fail( "Can't read" );
+        if (len < 0) {
+            fail("Can't read");
         }
 
         String originalString = new String( tosend, 0, tosend.length );
         String receivedString = new String( data, 0, len );
         assertEquals( originalString, receivedString );
     }
-    
+
     // ==================================================================================================
 
     public static class GetFileDescriptor implements IFileDescriptor {
@@ -106,7 +111,7 @@ public class MarshallingFileDescriptorTest {
         public GetFileDescriptor(FileDescriptor _descriptor) {
             fileDescriptor = _descriptor;
         }
-        
+
         @Override
         public boolean isRemote() {
             return false;
@@ -121,9 +126,9 @@ public class MarshallingFileDescriptorTest {
         public FileDescriptor getFileDescriptor() {
             return fileDescriptor;
         }
-        
+
     }
-    
+
     @DBusInterfaceName("foo.bar.TestFileDescriptor")
     public static interface IFileDescriptor extends DBusInterface {
 
