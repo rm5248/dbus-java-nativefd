@@ -2,9 +2,8 @@ package com.rm5248.dbusjava.nativefd;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.freedesktop.dbus.FileDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  msg_name=null,
@@ -66,6 +65,7 @@ public class MsgHdr {
         return m_fileDescriptors;
     }
 
+    @Override
     public String toString(){
         StringBuilder builder = new StringBuilder();
 

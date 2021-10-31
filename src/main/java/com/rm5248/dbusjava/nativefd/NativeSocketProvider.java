@@ -3,22 +3,21 @@ package com.rm5248.dbusjava.nativefd;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
-import jnr.unixsocket.UnixSocketChannel;
-import org.freedesktop.dbus.spi.IMessageReader;
-import org.freedesktop.dbus.spi.IMessageWriter;
-import org.freedesktop.dbus.spi.ISocketProvider;
+
+import org.freedesktop.dbus.spi.message.IMessageReader;
+import org.freedesktop.dbus.spi.message.IMessageWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jnr.unixsocket.UnixSocketChannel;
 
 /**
  *
  */
-public class NativeSocketProvider implements ISocketProvider {
+public class NativeSocketProvider implements org.freedesktop.dbus.spi.message.ISocketProvider {
 
     private static final Logger logger = LoggerFactory.getLogger( NativeSocketProvider.class.getName() );
 
@@ -36,15 +35,13 @@ public class NativeSocketProvider implements ISocketProvider {
     }
 
     @Override
-    public IMessageReader createReader(Socket _socket) throws IOException {
+    public IMessageReader createReader(SocketChannel _socket) throws IOException {
         if( !m_hasFiledescriptorSupport ){
             return null;
         }
 
-        SocketChannel sc = _socket.getChannel();
-        
-        if( sc instanceof UnixSocketChannel ){
-            int fd = ((UnixSocketChannel) sc).getFD();
+        if (_socket instanceof UnixSocketChannel ){
+            int fd = ((UnixSocketChannel) _socket).getFD();
             m_nativeMessageReader = new NativeMessageReader( fd );
             return m_nativeMessageReader;
         }
@@ -53,15 +50,13 @@ public class NativeSocketProvider implements ISocketProvider {
     }
 
     @Override
-    public IMessageWriter createWriter(Socket _socket) throws IOException {
+    public IMessageWriter createWriter(SocketChannel _socket) throws IOException {
         if( !m_hasFiledescriptorSupport ){
             return null;
         }
 
-        SocketChannel sc = _socket.getChannel();
-
-        if( sc instanceof UnixSocketChannel ){
-            int fd = ((UnixSocketChannel) sc).getFD();
+        if (_socket instanceof UnixSocketChannel ){
+            int fd = ((UnixSocketChannel) _socket).getFD();
             m_nativeMessageWriter = new NativeMessageWriter( fd );
             return m_nativeMessageWriter;
         }

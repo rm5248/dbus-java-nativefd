@@ -1,20 +1,20 @@
 package com.rm5248.dbusjava.nativefd;
 
-import java.io.EOFException;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import jnr.posix.POSIXFactory;
-import org.freedesktop.dbus.spi.IMessageReader;
+
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.exceptions.MessageProtocolVersionException;
 import org.freedesktop.dbus.messages.Message;
 import org.freedesktop.dbus.messages.Message.Endian;
 import org.freedesktop.dbus.messages.MessageFactory;
+import org.freedesktop.dbus.spi.message.IMessageReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import jnr.posix.POSIXFactory;
 
 /**
  * Implements a MessageReader that uses JNI code to call `sendmsg`.
@@ -78,7 +78,7 @@ public class NativeMessageReader implements IMessageReader {
         }
 
         totalMessageLen = 12 + (4 + headerArrayLen) + messageBodyLen;
-        
+
         if( totalMessageLen != h.getMessages().get( 0 ).length ){
             throw new IOException( "Incorrect length of data read from JNI" );
         }
