@@ -2,11 +2,31 @@
 
 [![Build Status](https://jenkins.rm5248.com/buildStatus/icon?job=dbus-java%2Fmultibranch-test%2Fmaster)](https://jenkins.rm5248.com/job/dbus-java/job/multibranch-test/job/master/)
 
-This repo contains an implementation of `IServiceProvider` for use
+This repo contains an implementation of `ISocketProvider` for use
 with [dbus-java](https://github.com/hypfvieh/dbus-java) that allows
 for sending and receiving `FileDescriptor`s
 
 To use: simply add to your project via Maven.
+
+## Version 2.x notes:
+
+Version 2.x(not yet released) targets dbus-java 4.0.0.  It will not work
+with previous(3.x) versions of dbus-java.
+
+Example:
+
+```
+<dependency>
+    <groupId>com.rm5248</groupId>
+    <artifactId>dbus-java-nativefd</artifactId>
+    <version>2.0</version>
+</dependency>
+```
+
+## Version 1.x notes:
+
+dbus-java needs to be version 3.2.1 or greater, but less than 4.0.0.  This is explicitly
+called out in the pom.xml
 
 Example:
 
@@ -17,9 +37,6 @@ Example:
     <version>1.0</version>
 </dependency>
 ```
-
-Note that dbus-java needs to be version 3.2.1 or greater.  This is explicitly
-called out in the pom.xml
 
 # Native Code
 
