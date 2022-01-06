@@ -10,7 +10,7 @@ To use: simply add to your project via Maven.
 
 ## Version 2.x notes:
 
-Version 2.x(not yet released) targets dbus-java 4.0.0.  It will not work
+Version 2.x(released 2022-01-05) targets dbus-java 4.0.0.  It will not work
 with previous(3.x) versions of dbus-java.
 
 Example:
